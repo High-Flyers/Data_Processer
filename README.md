@@ -1,1 +1,1 @@
-lol readme
+all progres is in working branch for now
