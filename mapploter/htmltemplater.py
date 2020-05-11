@@ -1,14 +1,15 @@
 import pdfkit
 import base64
+import os
+
 
 class HTMLTemplater:
     
-    def __init__(self, filepath, config):
+    def __init__(self, filepath):
         self.template = None
         with open(filepath, 'r') as file:
             self.template = file.read()
         
-        self.config = config
     
     def replace(self, fillMap):
         for (key, value) in fillMap.items():
@@ -30,6 +31,6 @@ class HTMLTemplater:
             'margin-left': '0.0in',
             'no-outline': None
         }
-        pdfkit.from_string(self.template, outpath, configuration=self.config, css='./style.css', options=options)
+        pdfkit.from_string(self.template, outpath, css=os.path.join(os.path.dirname(os.path.abspath(__file__)),'style.css'), options=options)
 
 
