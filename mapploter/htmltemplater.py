@@ -18,7 +18,7 @@ class HTMLTemplater:
     def replaceImage(self, key, filepath):
         with open(filepath, 'rb') as image_file:
             encoded_string = base64.b64encode(image_file.read())
-            encoded_string = 'data:image/jped;base64,' + encoded_string.decode('utf-8')
+            encoded_string = 'data:image/jpeg;base64,' + encoded_string.decode('utf-8')
 
             self.template - self.template.replace(f'<!-- model-replace: {key} -->', encoded_string)
     

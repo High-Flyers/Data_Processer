@@ -5,26 +5,28 @@ body{
 
     margin: auto;
     overflow: auto;
-    height: 1320px;
-    border: dotted red 2px;
+    height: 1310px;
+    border: dotted #f00 2px;
 }
 header{
     text-align: center;
 }
-footer, article, header{
+footer, header, article.figure{
     overflow: auto;
 }
 .details{
-    margin: 0;
-    top: 50%;
+    margin: 0 10px;
+    float: right;
+    width: 55%;
+    /*top: 50%;
     transform: translateY(-50%);
     position: absolute;
-    left: 45%;
+    left: 45%;*/
 }
-article{
+article.figure{
     width: 60%;
     margin: auto;
-    position: relative;
+    /*position: relative;*/
 }
 
 .DataPictures{
@@ -40,6 +42,11 @@ div{
 }
  
 img{
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+}
+.picture{
     display: inline-block;
     max-width: 100%;
     height: auto;
