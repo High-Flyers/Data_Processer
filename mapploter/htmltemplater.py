@@ -20,7 +20,7 @@ class HTMLTemplater:
             encoded_string = base64.b64encode(image_file.read())
             encoded_string = 'data:image/jpeg;base64,' + encoded_string.decode('utf-8')
 
-            self.template - self.template.replace(f'<!-- model-replace: {key} -->', encoded_string)
+            self.template = self.template.replace(f'<!-- model-replace: {key} -->', encoded_string)
     
     def save(self, outpath):
         options={

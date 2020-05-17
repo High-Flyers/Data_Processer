@@ -6,6 +6,7 @@ import os
 import math
 import pdfkit
 
+from PIL import Image
 from PyPDF2 import PdfFileMerger
 from htmltemplater import HTMLTemplater
 
@@ -23,7 +24,7 @@ class Figure:
             f'figure_{self.id}': f'''
                 <article class="figure">
                     <div class="DataPictures">
-                        <div class="picture" alt="Real estate picture" "></div>
+                        <img alt="mapofcoords" src="<!-- model-replace: picture_src_{self.id} -->"/>
                     </div>
                     <div class="details">
                         <p><span>Name:</span> <strong>{self.name}</strong></p>
@@ -34,25 +35,50 @@ class Figure:
                 <!-- model-replace: figure_{self.id + 1} -->
             ''',
         })
+        print(self.image_path)
+        self.templater.replaceImage(f'picture_src_{self.id}', self.image_path)
 
-        #self.templater.replaceImage(f'picture_src_{self.id}', self.image_path)
-
-def GetFromJson(this_dir_path, json_path):
+def GetDFFromJson(this_dir_path, json_path):
     json_file = os.path.join(this_dir_path, json_path)
 
     with open(json_file) as json_data:
         dataset  = json.loads(json_data.read())
         json_data.close()
-
     Figures = pd.json_normalize(dataset['Figures'])
+    return Figures
+
+def SplitDF(dataFrame):
     DFarray = []
-    for x in range(math.ceil(Figures.shape[0] / 5)):
-        tmp_df = Figures.iloc[(x*5):(x*5+5) , :]
+    for x in range(math.ceil(dataFrame.shape[0] / 5)):
+        tmp_df = dataFrame.iloc[(x*5):(x*5+5) , :]
         DFarray.append(tmp_df)
 
     return DFarray
 
-def generatePDF(this_dir_path, FiguresDF, out_dir, numer, out_format = 'pdf'):
+def plotCoords(dataFrame, image):    
+    nparray = dataFrame['Coords'].to_numpy()
+    width = []
+    lenght = []
+    for item in nparray:
+        width.append(item[0])
+        lenght.append(item[1])
+
+    fig, ax = plt.subplots()
+    ax.scatter(width, lenght, color='r')
+    ax.set_xlim(51.9998, 52.0002)
+    ax.set_ylim(18.9995, 19.0005)
+    ax.spines['top'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+  
+    return ax
+
+
+
+def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format = 'pdf'):
     #config = pdfkit.configuration(wkhtmltopdf=path_to_lib)
     #output_file_path = '' 
     out_dir = os.path.join(this_dir_path, out_dir)
@@ -60,17 +86,21 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, numer, out_format = 'pdf'):
     #templater = HTMLTemplater(html_file)
 
     #template picture
-    picture_file = os.path.join(this_dir_path, 'pictures/map.jpg')
+    
     templater = HTMLTemplater(html_file)
     Idex = 0
     for item in FiguresDF.iloc:
+        plotchild = plotbase
+        plotchild.scatter(item['Coords'][0], item['Coords'][1], color = 'b')
+        name = item['ID']
+        plt.savefig(os.path.join(this_dir_path, f'plotsimg/plot{name}.jpg'))
+        picture_file = os.path.join(this_dir_path, f'plotsimg/plot{name}.jpg')
         figure = Figure(Idex, item['Name'], item['Area'], item['Coords'], picture_file, templater)
-        print(item['Name'])
         figure.fillSheet()
         Idex += 1
 
     if out_format == 'pdf':
-            out_path = os.path.join(out_dir, f'out{numer}.pdf')
+            out_path = os.path.join(out_dir, f'out{number}.pdf')
             output_file_path = out_path
             templater.save(out_path)
     
@@ -83,12 +113,15 @@ def main():
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     print(THIS_FOLDER)
     #json_file = os.path.join(THIS_FOLDER, 'log_ksztalty.json')
-    DFarray = GetFromJson(THIS_FOLDER, 'log_ksztalty.json')
-
+    DF = GetDFFromJson(THIS_FOLDER, 'log_ksztalty.json')
+    DFarray = SplitDF(DF)
+    img = os.path.join(THIS_FOLDER, 'pictures/map2.png')
+    plot = plotCoords(DF, img)
+    #plt.savefig(os.path.join(THIS_FOLDER, 'plotmap/fool.png'))
     pdfarray = []
     i = 0
     for DF in DFarray:
-        pdf = generatePDF(THIS_FOLDER, DF, 'pdf', i,'pdf')
+        pdf = generatePDF(THIS_FOLDER, DF, 'pdf', i, plot,'pdf')
         pdfarray.append(pdf)
         i += 1
 
