@@ -5,17 +5,21 @@ import json
 import os   
 import math
 import pdfkit
+import argparse
+
 
 from PIL import Image
 from PyPDF2 import PdfFileMerger
 from htmltemplater import HTMLTemplater
 
 class Figure:
-    def __init__(self, ID, Name, Area, Coords, image_path, templater):
+    def __init__(self, ID, Name, Area, Coords, Disease, Distances, image_path, templater):
         self.id = ID
         self.name = Name
         self.area = Area
         self.coords = Coords
+        self.disease = Disease
+        self.distances = Distances
         self.image_path = image_path
         self.templater = templater
 #<img alt="picture" src="<!-- model-replace: picture_src_{self.id} -->">
@@ -27,9 +31,11 @@ class Figure:
                         <img alt="mapofcoords" src="<!-- model-replace: picture_src_{self.id} -->"/>
                     </div>
                     <div class="details">
-                        <p><span>Name:</span> <strong>{self.name}</strong></p>
-                        <p><span>Area:</span> <strong>{self.area}</strong> </p>
-                        <p><span>Cords:</span> <strong>{self.coords}</strong> </p>
+                        <p><span>Kształt:</span> <strong>{self.name}</strong></p>
+                        <p><span>Choroba:</span> <strong>{self.disease}</strong> </p>
+                        <p><span>Pole:</span> <strong>{self.area}</strong> </p>
+                        <p><span>Koordynaty:</span> <strong>{self.coords}</strong> </p>
+                        <p><span>Choroba:</span> <strong>{self.distances}</strong> </p>    
                     </div> 
                 </article>
                 <!-- model-replace: figure_{self.id + 1} -->
@@ -59,21 +65,24 @@ def plotCoords(dataFrame, image):
     nparray = dataFrame['Coords'].to_numpy()
     width = []
     lenght = []
+    img = plt.imread(image)
     for item in nparray:
         width.append(item[0])
         lenght.append(item[1])
 
     fig, ax = plt.subplots()
-    ax.scatter(width, lenght, color='r')
+    ax.imshow(img, extent=[51.9998, 52.0002, 18.9998, 19.0002])
+    ax.scatter(width, lenght, color='r', s=100)
     ax.set_xlim(51.9998, 52.0002)
-    ax.set_ylim(18.9995, 19.0005)
+    ax.set_ylim(18.9998, 19.0002)
     ax.spines['top'].set_visible(False)
     ax.spines['left'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_xticks([])
     ax.set_yticks([])
-  
+    
+
     return ax
 
 
@@ -89,14 +98,15 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format 
     
     templater = HTMLTemplater(html_file)
     Idex = 0
+    plotchild = plotbase
     for item in FiguresDF.iloc:
-        plotchild = plotbase
-        plotchild.scatter(item['Coords'][0], item['Coords'][1], color = 'b')
+        plotchild.scatter(item['Coords'][0], item['Coords'][1], color = 'b', s=100)
         name = item['ID']
         plt.savefig(os.path.join(this_dir_path, f'plotsimg/plot{name}.jpg'))
         picture_file = os.path.join(this_dir_path, f'plotsimg/plot{name}.jpg')
-        figure = Figure(Idex, item['Name'], item['Area'], item['Coords'], picture_file, templater)
+        figure = Figure(Idex, item['Name'], item['Area'], item['Coords'], item['Choroba'], item['Distances'],picture_file, templater)
         figure.fillSheet()
+        plotchild.scatter(item['Coords'][0], item['Coords'][1], color = 'r', s=100)
         Idex += 1
 
     if out_format == 'pdf':
@@ -109,13 +119,16 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format 
 
 
 def main():
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', action='store', dest='datafile',
+                        help='Store file name', default='log_ksztalty1.json')
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     print(THIS_FOLDER)
+    results = parser.parse_args()
     #json_file = os.path.join(THIS_FOLDER, 'log_ksztalty.json')
-    DF = GetDFFromJson(THIS_FOLDER, 'log_ksztalty.json')
+    DF = GetDFFromJson(THIS_FOLDER, results.datafile)
     DFarray = SplitDF(DF)
-    img = os.path.join(THIS_FOLDER, 'pictures/map2.png')
+    img = os.path.join(THIS_FOLDER, 'pictures/map3.png')
     plot = plotCoords(DF, img)
     #plt.savefig(os.path.join(THIS_FOLDER, 'plotmap/fool.png'))
     pdfarray = []
