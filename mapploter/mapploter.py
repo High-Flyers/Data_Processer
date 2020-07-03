@@ -157,7 +157,7 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-', action='store', dest='final',
+    parser.add_argument('-p', action='store', dest='final',
                         help='Store file name', default='final_figures/log_ksztalty.json')
     parser.add_argument('-f', action='store', dest='fake',
                         help='Store file name', default='fake_figures/log_ksztalty.json')
