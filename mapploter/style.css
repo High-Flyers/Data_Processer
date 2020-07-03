@@ -1,6 +1,7 @@
 *{
     font-family: sans-serif;
     box-sizing: border-box;
+    overflow: hidden; /* Hide scrollbars */
 }
 body{
 
@@ -9,16 +10,20 @@ body{
     height: 1310px;
     border: dotted #f00 2px;
 }
-header{
-    text-align: center;
-}
 footer, header, article.figure{
     overflow: auto;
 }
+header{
+    text-align: center;
+    padding: 0;
+    height: 100px;
+    overflow: hidden; 
+}
+
 .details{
-    margin: 0 ;
+    margin: 0;
     float: right;
-    width: 55%;
+    width: 45%;
     /*top: 50%;
     transform: translateY(-50%);
     position: absolute;
@@ -26,13 +31,14 @@ footer, header, article.figure{
     
 }
 article.figure{
-    width: 60%;
+    width: 80%;
     margin: auto;
     /*position: relative;*/
+    border: 1px solid #000;
 }
 
 .DataPictures{
-    width: 45%;
+    width: 55%;
     padding: 0;
     
 }
@@ -75,23 +81,31 @@ footer *{
     
 }
 #logo{
-    height: 80px;
-    width: 80px;
+    height: 150px;
+    width: 150px;
     float: right;
     border-radius: 100%;
     position: relative;
     border: .5px #333  solid;
+    padding: 0;
+    margin-bottom: 0;
+    overflow: hidden; 
 }
 #logo_png{
     margin: 0;
     position: absolute;
-    top: 50%;
+    top: 0;
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
+    margin-bottom: 0;
+    overflow: hidden; 
 }
 
 #footer_content{
     width: 100%;
+    padding: 0;
+    margin-bottom: 0;
+    overflow: hidden; 
 }
 #outofnames{
     position: relative;
