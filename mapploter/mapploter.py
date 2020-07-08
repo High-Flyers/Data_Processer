@@ -12,6 +12,17 @@ from PyPDF2 import PdfFileMerger
 from htmltemplater import HTMLTemplater
 
 def MakeColorSquare(colorTable, id):
+    """Making an color image and returning path to it
+
+        Parameters
+        ----------
+        colorTable : array
+            array of rgb color
+        id : int
+            id of the figure, used to save identify image
+
+    """
+
     THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
     r = math.floor(colorTable[0])
     g = math.floor(colorTable[1])
@@ -22,6 +33,14 @@ def MakeColorSquare(colorTable, id):
     return image_path
 
 def Translate(word):
+    """Translating word to polish version
+
+         Parameters
+        ----------
+        word : str
+            word to translate
+    """
+
     if word == 'triangle':
         trasnated = 'trójkąt'
     elif word == 'circle':
@@ -35,6 +54,37 @@ def Translate(word):
     return trasnated
 
 class Figure:
+    """A class used to represent Figure object
+
+     Attributes
+    ----------
+    ID : int
+        id of the figure
+    name : str
+        the name of the figure
+    Area : float
+        area of the figure
+    Coords : array
+        coords of the figure
+    Disease : str
+        detected disease
+    Distances : array
+        distances of the figure
+    Color : array
+        array of rgb color
+    PlothPath : str
+        path to plot image
+    Image_path : str
+        path to figure image
+    templater : HTMLTemplater
+        object to generate data in html code
+
+    Methods
+    -------
+    fillSheet()
+        fillig html with own data
+    """
+
     def __init__(self, ID, Name, Area, Coords, Disease, Distances, Color, PlotPath, Image_path, templater):
         self.id = ID
         self.name = Name
@@ -48,7 +98,7 @@ class Figure:
         self.templater = templater
         
     def fillSheet(self):
-    
+        """fillig html with own data"""
         self.templater.replace ({
             f'figure_{self.id}': f'''
                 <article class="figure">
@@ -73,6 +123,15 @@ class Figure:
 
 
 def GetDFFromJson(this_dir_path, json_path):
+    """Geting data frame from json file
+        Parameters
+        ----------
+        this_dir_path : str
+            path to this dir
+        json_path : str
+            path to json file
+    """
+
     json_file = os.path.join(this_dir_path, json_path)
 
     with open(json_file) as json_data:
@@ -83,6 +142,14 @@ def GetDFFromJson(this_dir_path, json_path):
 
 
 def SplitDF(dataFrame):
+    """Spliting data frame to array containing the number of objects per page
+
+        Parameters
+        ----------
+        dataFrame : array
+            data frame from json file
+    """
+
     DFarray = []
     objectsOnSite = 3
     for x in range(math.ceil(dataFrame.shape[0] / objectsOnSite)):
@@ -92,6 +159,16 @@ def SplitDF(dataFrame):
     return DFarray
 
 def plotCoords(dataFrame, image):    
+    """Ploting Cords on the map and returning the plot
+
+        Parameters
+        ----------
+        dataFrame : array
+            data frame from json file
+        image : str
+            image path to map image
+    """
+
     nparray = dataFrame['Coords'].to_numpy()
     width = []
     lenght = []
@@ -117,6 +194,24 @@ def plotCoords(dataFrame, image):
 
 
 def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format = 'pdf'): 
+    """Generating pdf file from dataframe
+
+        Parameters
+        ----------
+        this_dir_path : str
+            path to this dir
+        FiguresDF : array
+            data frame with object on one page
+        out_dir : str
+            path to out dir
+        number : int
+            number of page
+        plotbase : plt.subplots()
+            base plot of coords
+        out_format : str, optional
+            out format of the file (default pdf)
+    """
+
     out_dir = os.path.join(this_dir_path, out_dir)
     html_file = os.path.join(this_dir_path, 'template.html')
     
@@ -124,6 +219,7 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format 
     Idex = 0
     plotchild = plotbase
     for item in FiguresDF.iloc:
+        #plot own coords on map with different color
         plotchild.scatter(item['Coords'][1], item['Coords'][0], color = 'b', s=100)
         name = item['ID']
         plt.savefig(os.path.join(this_dir_path, f'plotsimg/plot{name}.jpg'))
@@ -136,6 +232,7 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format 
             image_file = os.path.join(this_dir_path, f'figures_photos/{name_of_file}')
         figure = Figure(Idex, item['Name'], item['Area'], item['Coords'], item['Choroba'], item['Distances'], item['Mean color'], plot_file, image_file, templater)
         figure.fillSheet()
+        #plot own coords on map with the same color as the rest
         plotchild.scatter(item['Coords'][1], item['Coords'][0], color = 'r', s=100)
         Idex += 1
 
@@ -148,7 +245,7 @@ def generatePDF(this_dir_path, FiguresDF, out_dir, number, plotbase, out_format 
     return output_file_path
 
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-j', action='store', dest='final',
                         help='Store file name', default='final_figures/log_ksztalty.json')
@@ -157,8 +254,8 @@ def main():
 
     DF = GetDFFromJson(THIS_FOLDER, results.final)
     DFarray = SplitDF(DF)
-    img = os.path.join(THIS_FOLDER, 'pictures/map.png')
-    plot = plotCoords(DF, img)
+    mapFile = os.path.join(THIS_FOLDER, 'pictures/map.png')
+    plot = plotCoords(DF, mapFile)
   
     pdfarray = []
     i = 0
@@ -167,6 +264,7 @@ def main():
         pdfarray.append(pdf)
         i += 1
 
+    #merging all the pdf to one
     merger = PdfFileMerger()
     
     for pdf in pdfarray:
@@ -174,13 +272,5 @@ def main():
 
     merger.write(os.path.join(THIS_FOLDER, 'pdf/result1.pdf'))
     merger.close()
-
-if __name__ == "__main__":
-    main()
-
-
-
-
-
 
 
