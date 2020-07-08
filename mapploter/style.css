@@ -8,7 +8,6 @@ body{
     margin: auto;
     overflow: auto;
     height: 1310px;
-    border: dotted #f00 2px;
 }
 footer, header, article.figure{
     overflow: auto;
