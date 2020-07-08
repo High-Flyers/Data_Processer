@@ -1,0 +1,128 @@
+{
+	"Figures": [
+        {
+            "Name": "square", 
+            "Area": 1.32, 
+            "Choroba": "Mączniak rzekomy kapustowatych", 
+            "Valid": true, 
+            "Coords": [
+                50.238657, 
+                19.026367
+            ], 
+            "Mass centre": [
+                191, 
+                417
+            ], 
+            "ID": 0, 
+            "Distances": [
+                20.22, 
+                19.85, 
+                19.31
+            ], 
+            "File": "20200702_204030_square_3.jpg", 
+            "Mean color": [
+                147.0, 
+                106.0, 
+                76.0
+            ], 
+            "Angles": [
+                57.6, 
+                62.2, 
+                60.2
+            ]
+        }, 
+        {
+            "Name": "triangle", 
+            "Area": 2.33, 
+            "Choroba": "Mączniak rzekomy kapustowatych", 
+            "Valid": true, 
+            "Coords": [
+                50.238752, 19.026982
+            ], 
+            "Mass centre": [
+                189, 
+                84
+            ], 
+            "ID": 1, 
+            "Distances": [
+                25.06, 
+                25.94, 
+                25.06, 
+                25.94
+            ], 
+            "File": "20200702_204030_triangle_0.jpg", 
+            "Mean color": [
+                255.0, 
+                185.0, 
+                51.0
+            ], 
+            "Angles": [
+                88.9, 
+                91.1, 
+                88.9, 
+                91.1
+            ]
+        },
+        {
+            "Name": "quadrangle", 
+            "Area": 0.76, 
+            "Choroba": "Mączniak rzekomy kapustowatych", 
+            "Valid": true, 
+            "Coords": [
+                50.239049, 
+                19.029111
+            ], 
+            "Mass centre": [
+                191, 
+                417
+            ], 
+            "ID": 2, 
+            "Distances": [
+                20.22, 
+                19.85, 
+                19.31
+            ], 
+            "File": "20200702_204030_quadrangle_2.jpg", 
+            "Mean color": [
+                147.0, 
+                255.0, 
+                76.0
+            ], 
+            "Angles": [
+                57.6, 
+                62.2, 
+                60.2
+            ]
+        }, 
+        {
+            "Name": "circle", 
+            "Area": 2.24, 
+            "Choroba": "Fytoftoroza", 
+            "Valid": true, 
+            "Coords": [
+                50.239312, 19.030097
+            ], 
+            "Mass centre": [
+                191, 
+                417
+            ], 
+            "ID": 3, 
+            "Distances": [
+                20.22, 
+                19.85, 
+                19.31
+            ], 
+            "File": "20200702_204030_circle_1.jpg", 
+            "Mean color": [
+                255.0, 
+                106.0, 
+                76.0
+            ], 
+            "Angles": [
+                57.6, 
+                62.2, 
+                60.2
+            ]
+        }
+    ]
+}
