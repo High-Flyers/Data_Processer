@@ -29,7 +29,7 @@ Remember to change image paths
 ## Results 
 Here you have sample of result:
 
-![image of the sample](preview/sample.png)
+![image of the sample](preview/Sample.png)
 
 
 ## Author
